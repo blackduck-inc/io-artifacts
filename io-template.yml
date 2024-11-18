@@ -2,7 +2,7 @@
 
 variables:  
   ASSET_ID: $CI_PROJECT_PATH
-  WORKFLOW_ENGINE_VERSION: "2023.3.2"
+  WORKFLOW_ENGINE_VERSION: "2024.11.0"
   POLARIS_PROJECT_NAME: $CI_PROJECT_NAME
   BLACKDUCK_PROJECT_NAME: $CI_PROJECT_NAME:$BLACKDUCK_PROJECT_VERSION 
   SCM_OWNER: $CI_PROJECT_NAMESPACE
@@ -118,7 +118,7 @@ IO:
             export changeScore=$(jq -r '.riskScoreCard.changeSignificanceScore' result.json | cut -d'/' -f2)
             echo -n "Total Score - " && echo "$bizScore + $dataScore + $accessScore + $vulnScore + $changeScore" | bc
         fi
-       - rm -rf synopsys-io.ym
+       - rm -rf synopsys-io.yml
        - rm -rf synopsys-io.json
 
         
@@ -187,12 +187,12 @@ IO_WORKFLOWENGINE:
        - echo "Triggering WorkFlowEngine "
        - >
            if [ $MANIFEST_TYPE == "yml" ]; then
-             java -jar WorkflowClient.jar --ioiq.url=$IO_SERVER_URL --ioiq.token=$IO_ACCESS_TOKEN --run.id=$RUN_ID --workflowengine.url=$WORKFLOW_ENGINE_SERVER_URL --io.manifest.path=synopsys-io.ym
+             java -jar WorkflowClient.jar --ioiq.url=$IO_SERVER_URL --ioiq.token=$IO_ACCESS_TOKEN --run.id=$RUN_ID --workflowengine.url=$WORKFLOW_ENGINE_SERVER_URL --io.manifest.path=synopsys-io.yml
            elif [ $MANIFEST_TYPE == "json" ]; then
              java -jar WorkflowClient.jar --ioiq.url=$IO_SERVER_URL --ioiq.token=$IO_ACCESS_TOKEN --run.id=$RUN_ID --workflowengine.url=$WORKFLOW_ENGINE_SERVER_URL --io.manifest.path=synopsys-io.json
            fi 
        - |
         echo "========================== IO WorkflowEngine Summary ============================"
         echo "Breaker Status - $(jq -r '.breaker.status' wf-output.json)"
-       - rm -rf synopsys-io.ym
+       - rm -rf synopsys-io.yml
        - rm -rf synopsys-io.json

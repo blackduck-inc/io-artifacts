@@ -30,7 +30,7 @@ run() {
 
     box_star "Current Stage is set to ${stage}"
 
-    #method to generate synopsys-io.ym file
+    #method to generate synopsys-io.yml file
     generateYML "${ARGS[@]}"
     
     if [[ "${stage}" == "IO" ]]; then
@@ -177,8 +177,8 @@ function generateYML () {
     validate_values "IO_SERVER_URL" "$io_url"
     validate_values "IO_SERVER_TOKEN" "$io_token"
     
-    #checks if the synopsys-io.ym present
-    is_io_config_present
+    #checks if the synopsys-io.yml present
+    is_synopsys_config_present
 
     #default values
     if [ -z "$file_change_threshold" ]; then
@@ -388,7 +388,7 @@ function generateYML () {
 	    s~<<SCM_REPO_NAME>>~$scm_repo_name~g; \
 	    s~<<SCM_BRANCH_NAME>>~$scm_branch_name~g")
         # apply the yml with the substituted value
-        echo "$synopsys_io_manifest" >synopsys-io.ym
+        echo "$synopsys_io_manifest" >synopsys-io.yml
     fi
     printf "IO Manifest Type: ${manifest_type}\n"	
     printf "IO manifest file generated\n"
@@ -407,13 +407,13 @@ function loadWorkflow() {
         if [[ "$manifest_type" == "json" ]]; then
             asset_id_manifest=$(jq -r '.application.assetId' synopsys-io.json)
         elif [[ "$manifest_type" == "yml" ]]; then
-            asset_id_manifest=$(ruby -r yaml -e 'puts YAML.load_file(ARGV[0])["application"]["assetId"]' synopsys-io.ym)
+            asset_id_manifest=$(ruby -r yaml -e 'puts YAML.load_file(ARGV[0])["application"]["assetId"]' synopsys-io.yml)
         fi
 
         if [[ "$manifest_type" == "json" ]]; then
             project_name_manifest=$(jq -r '.application.projectName' synopsys-io.json)
         elif [[ "$manifest_type" == "yml" ]]; then
-            project_name_manifest=$(ruby -r yaml -e 'puts YAML.load_file(ARGV[0])["application"]["projectName"]' synopsys-io.ym)
+            project_name_manifest=$(ruby -r yaml -e 'puts YAML.load_file(ARGV[0])["application"]["projectName"]' synopsys-io.yml)
         fi
 	
         curr_date=$(date +'%Y-%m-%d')
@@ -558,8 +558,8 @@ function getIOPrescription() {
         cat data.json
     elif [[ "$manifest_type" == "yml" ]]; then
         #Yaml to Json Conversion
-        cat synopsys-io.ym
-	echo $(ruby -ryaml -rjson -e "puts JSON.pretty_generate(YAML.safe_load(File.read('synopsys-io.ym')))") >data.json
+        cat synopsys-io.yml
+	echo $(ruby -ryaml -rjson -e "puts JSON.pretty_generate(YAML.safe_load(File.read('synopsys-io.yml')))") >data.json
         cat data.json
     fi
 	
@@ -579,7 +579,7 @@ function validate_values () {
     fi
 }
 
-function is_io_config_present () {
+function is_synopsys_config_present () {
     if [ ! -f "$config_file" ]; then
         printf "${config_file} file does not exist\n"
         printf "Downloading default ${config_file}\n"
