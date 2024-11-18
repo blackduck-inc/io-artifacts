@@ -1,8 +1,8 @@
-# Copyright (c) 2021 Synopsys, Inc. All rights reserved worldwide.
+# Copyright (c) 2024 Black Duck Software, Inc. All rights reserved worldwide.
 
 variables:  
   ASSET_ID: $CI_PROJECT_PATH
-  WORKFLOW_ENGINE_VERSION: "2023.3.2"
+  WORKFLOW_ENGINE_VERSION: "2023.3.3"
   POLARIS_PROJECT_NAME: $CI_PROJECT_NAME
   BLACKDUCK_PROJECT_NAME: $CI_PROJECT_NAME:$BLACKDUCK_PROJECT_VERSION 
   SCM_OWNER: $CI_PROJECT_NAMESPACE
@@ -20,7 +20,7 @@ IO:
           - $CI_PROJECT_DIR/scans.env
    script:
        - rm -rf prescription.sh
-       - wget "https://raw.githubusercontent.com/synopsys-sig/io-artifacts/${WORKFLOW_ENGINE_VERSION}/prescription.sh"
+       - wget "https://raw.githubusercontent.com/blackduck-inc/io-artifacts/${WORKFLOW_ENGINE_VERSION}/prescription.sh"
        - sed -i -e 's/\r$//' prescription.sh
        - chmod +x prescription.sh 
        - ./prescription.sh 
@@ -130,7 +130,7 @@ IO_WORKFLOWENGINE:
    script:
        - >
            if [ ! -f 'prescription.sh' ]; then
-            wget "https://raw.githubusercontent.com/synopsys-sig/io-artifacts/${WORKFLOW_ENGINE_VERSION}/prescription.sh"
+            wget "https://raw.githubusercontent.com/blackduck-inc/io-artifacts/${WORKFLOW_ENGINE_VERSION}/prescription.sh"
            fi  
        - sed -i -e 's/\r$//' prescription.sh
        - chmod +x prescription.sh 
