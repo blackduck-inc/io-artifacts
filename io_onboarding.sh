@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2021 Synopsys, Inc. All rights reserved worldwide.
+# Copyright (c) 2024 Black Duck Software, Inc. All rights reserved worldwide.
 
 for i in "$@"; do
     case "$i" in
@@ -54,7 +54,7 @@ if [ "$onBoardingResponse" = "TPI Data created/updated successfully" ] ; then
     if [ ! -f "${config_file}" ]; then
         printf "${config_file} file does not exist\n"
         printf "Downloading default ${config_file}\n"
-        wget "https://raw.githubusercontent.com/synopsys-sig/io-artifacts/${workflow_version}/${config_file}"
+        wget "https://raw.githubusercontent.com/blackduck-inc/io-artifacts/${workflow_version}/${config_file}"
     fi
 
     workflow=$(cat ${config_file} | sed "s~<<ASSET_ID>>~$assetId~g; s~<<APP_ID>>~$assetId~g")

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2021 Synopsys, Inc. All rights reserved worldwide.
+# Copyright (c) 2024 Black Duck Software, Inc. All rights reserved worldwide.
 
 for i in "$@"; do
     case "$i" in

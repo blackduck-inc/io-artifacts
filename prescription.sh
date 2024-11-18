@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Copyright (c) 2021 Synopsys, Inc. All rights reserved worldwide.
+# Copyright (c) 2024 Black Duck Software, Inc. All rights reserved worldwide.
 
 run() {
-    box_line "Synopsys Intelligent Security Scan" "Copyright 2020-2021 Synopsys, Inc. All rights reserved worldwide."
+    box_line "Intelligent Security Scan" "Copyright 2020-2024 Black Duck Software, Inc. All rights reserved worldwide."
     allargs="${ARGS[@]}"
     
     for i in "${ARGS[@]}"; do
@@ -30,7 +30,7 @@ run() {
 
     box_star "Current Stage is set to ${stage}"
 
-    #method to generate synopsys-io.yml file
+    #method to generate synopsys-io.ym file
     generateYML "${ARGS[@]}"
     
     if [[ "${stage}" == "IO" ]]; then
@@ -177,8 +177,8 @@ function generateYML () {
     validate_values "IO_SERVER_URL" "$io_url"
     validate_values "IO_SERVER_TOKEN" "$io_token"
     
-    #checks if the synopsys-io.yml present
-    is_synopsys_config_present
+    #checks if the synopsys-io.ym present
+    is_io_config_present
 
     #default values
     if [ -z "$file_change_threshold" ]; then
@@ -322,7 +322,7 @@ function generateYML () {
 	    s~<<SCM_REPO_NAME>>~$scm_repo_name~g; \
 	    s~<<SCM_BRANCH_NAME>>~$scm_branch_name~g")
         # apply the json with the substituted value
-        echo "$synopsys_io_manifest" >synopsys-io.json	
+        echo "$synopsys_io_manifest" >synopsys-io.json
     elif [[ "$manifest_type" == "yml" ]]; then
         synopsys_io_manifest=$(cat $config_file |
         sed " s~<<SLACK_CHANNEL_ID>>~$slack_channel_id~g; \
@@ -388,7 +388,7 @@ function generateYML () {
 	    s~<<SCM_REPO_NAME>>~$scm_repo_name~g; \
 	    s~<<SCM_BRANCH_NAME>>~$scm_branch_name~g")
         # apply the yml with the substituted value
-        echo "$synopsys_io_manifest" >synopsys-io.yml
+        echo "$synopsys_io_manifest" >synopsys-io.ym
     fi
     printf "IO Manifest Type: ${manifest_type}\n"	
     printf "IO manifest file generated\n"
@@ -407,13 +407,13 @@ function loadWorkflow() {
         if [[ "$manifest_type" == "json" ]]; then
             asset_id_manifest=$(jq -r '.application.assetId' synopsys-io.json)
         elif [[ "$manifest_type" == "yml" ]]; then
-            asset_id_manifest=$(ruby -r yaml -e 'puts YAML.load_file(ARGV[0])["application"]["assetId"]' synopsys-io.yml)
+            asset_id_manifest=$(ruby -r yaml -e 'puts YAML.load_file(ARGV[0])["application"]["assetId"]' synopsys-io.ym)
         fi
 
         if [[ "$manifest_type" == "json" ]]; then
             project_name_manifest=$(jq -r '.application.projectName' synopsys-io.json)
         elif [[ "$manifest_type" == "yml" ]]; then
-            project_name_manifest=$(ruby -r yaml -e 'puts YAML.load_file(ARGV[0])["application"]["projectName"]' synopsys-io.yml)
+            project_name_manifest=$(ruby -r yaml -e 'puts YAML.load_file(ARGV[0])["application"]["projectName"]' synopsys-io.ym)
         fi
 	
         curr_date=$(date +'%Y-%m-%d')
@@ -558,8 +558,8 @@ function getIOPrescription() {
         cat data.json
     elif [[ "$manifest_type" == "yml" ]]; then
         #Yaml to Json Conversion
-        cat synopsys-io.yml
-	echo $(ruby -ryaml -rjson -e "puts JSON.pretty_generate(YAML.safe_load(File.read('synopsys-io.yml')))") >data.json
+        cat synopsys-io.ym
+	echo $(ruby -ryaml -rjson -e "puts JSON.pretty_generate(YAML.safe_load(File.read('synopsys-io.ym')))") >data.json
         cat data.json
     fi
 	
@@ -579,12 +579,12 @@ function validate_values () {
     fi
 }
 
-function is_synopsys_config_present () {
+function is_io_config_present () {
     if [ ! -f "$config_file" ]; then
         printf "${config_file} file does not exist\n"
         printf "Downloading default ${config_file}\n"
         if [ -z "$io_manifest_url" ]; then
-            wget "https://raw.githubusercontent.com/synopsys-sig/io-artifacts/${workflow_version}/${config_file}"
+            wget "https://raw.githubusercontent.com/blackduck-inc/io-artifacts/${workflow_version}/${config_file}"
         else
             wget "$io_manifest_url" -O $config_file
         fi
@@ -595,7 +595,7 @@ function is_workflow_client_jar_present () {
     if [ ! -f "WorkflowClient.jar" ]; then
         printf "WorkflowClient.jar file does not exist\n"
         printf "Downloading default WorkflowClient.jar\n"
-        wget --progress=bar:force "https://github.com/synopsys-sig/io-artifacts/releases/download/${workflow_version}/WorkflowClient.jar"
+        wget --progress=bar:force "https://github.com/blackduck-inc/io-artifacts/releases/download/${workflow_version}/WorkflowClient.jar"
     fi
 }
 

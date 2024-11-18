@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Synopsys, Inc. All rights reserved worldwide.
+# Copyright (c) 2024 Black Duck Software, Inc. All rights reserved worldwide.
 
 variables:  
   ASSET_ID: $CI_PROJECT_PATH
@@ -20,7 +20,7 @@ IO:
           - $CI_PROJECT_DIR/scans.env
    script:
        - rm -rf prescription.sh
-       - wget "https://raw.githubusercontent.com/synopsys-sig/io-artifacts/${WORKFLOW_ENGINE_VERSION}/prescription.sh"
+       - wget "https://raw.githubusercontent.com/blackduck-inc/io-artifacts/${WORKFLOW_ENGINE_VERSION}/prescription.sh"
        - sed -i -e 's/\r$//' prescription.sh
        - chmod +x prescription.sh 
        - ./prescription.sh 
@@ -118,7 +118,7 @@ IO:
             export changeScore=$(jq -r '.riskScoreCard.changeSignificanceScore' result.json | cut -d'/' -f2)
             echo -n "Total Score - " && echo "$bizScore + $dataScore + $accessScore + $vulnScore + $changeScore" | bc
         fi
-       - rm -rf synopsys-io.yml
+       - rm -rf synopsys-io.ym
        - rm -rf synopsys-io.json
 
         
@@ -130,7 +130,7 @@ IO_WORKFLOWENGINE:
    script:
        - >
            if [ ! -f 'prescription.sh' ]; then
-            wget "https://raw.githubusercontent.com/synopsys-sig/io-artifacts/${WORKFLOW_ENGINE_VERSION}/prescription.sh"
+            wget "https://raw.githubusercontent.com/blackduck-inc/io-artifacts/${WORKFLOW_ENGINE_VERSION}/prescription.sh"
            fi  
        - sed -i -e 's/\r$//' prescription.sh
        - chmod +x prescription.sh 
@@ -187,12 +187,12 @@ IO_WORKFLOWENGINE:
        - echo "Triggering WorkFlowEngine "
        - >
            if [ $MANIFEST_TYPE == "yml" ]; then
-             java -jar WorkflowClient.jar --ioiq.url=$IO_SERVER_URL --ioiq.token=$IO_ACCESS_TOKEN --run.id=$RUN_ID --workflowengine.url=$WORKFLOW_ENGINE_SERVER_URL --io.manifest.path=synopsys-io.yml
+             java -jar WorkflowClient.jar --ioiq.url=$IO_SERVER_URL --ioiq.token=$IO_ACCESS_TOKEN --run.id=$RUN_ID --workflowengine.url=$WORKFLOW_ENGINE_SERVER_URL --io.manifest.path=synopsys-io.ym
            elif [ $MANIFEST_TYPE == "json" ]; then
              java -jar WorkflowClient.jar --ioiq.url=$IO_SERVER_URL --ioiq.token=$IO_ACCESS_TOKEN --run.id=$RUN_ID --workflowengine.url=$WORKFLOW_ENGINE_SERVER_URL --io.manifest.path=synopsys-io.json
            fi 
        - |
         echo "========================== IO WorkflowEngine Summary ============================"
         echo "Breaker Status - $(jq -r '.breaker.status' wf-output.json)"
-       - rm -rf synopsys-io.yml
+       - rm -rf synopsys-io.ym
        - rm -rf synopsys-io.json
